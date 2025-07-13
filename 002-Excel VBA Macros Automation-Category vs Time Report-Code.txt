@@ -1,0 +1,498 @@
+''****************
+''Any types of Excel Automation, Report, Dashboard, VBA, Macros, MIS, Adv. Excel, SQL, Web Development using Django please contact me
+''Name:Mahetab
+''mahetabforwork@gmail.com
+''Mob:+91 9545302653
+''****************
+
+Sub Main_Sample()
+''' code execution start from here
+
+    Application.ScreenUpdating = False
+    Application.DisplayAlerts = False
+    
+    Dim sht As Worksheet
+    Dim shtCnt As Integer
+    shtCnt = ActiveWorkbook.Sheets.Count
+    
+    ''Debug.Print shtCnt
+    
+    
+        
+    If shtCnt > 2 Then
+        Call deleteAllSheet_Categor
+    End If
+    
+    Call deleteSheet
+    Call deleteTempSht
+    
+    ''ADD datasheet method
+    Call find_W_WO_WWO
+    
+    Call addTempSht
+    Call textToColumn
+    Call dynamicallyFindLastColumn
+    
+    Call addOneSheet
+    
+    Call LastRow
+    Call autofitColumn
+    Call removeDuplicate
+    Call addManySheet
+    Call applyFilter
+    
+    
+    
+    Application.ScreenUpdating = True
+    Application.DisplayAlerts = True
+    
+    ThisWorkbook.Activate
+    ActiveWorkbook.Save
+    MsgBox ("Your Task Completed ! ENJOY !!!")
+    
+
+End Sub
+
+
+Sub autofitColumn()
+
+' autofitColumn Macro
+' Autofit excel sheet column
+
+    ThisWorkbook.Activate
+    Sheets("datasheet").Select
+    Sheets("datasheet").Activate
+    
+    Cells.Select
+    Selection.Columns.AutoFit
+    Range("A1").Select
+    
+End Sub
+Sub LastRow()
+'
+' lastRow Macro
+' find the last row of the sheet as per column entry.
+'
+    Dim LastRow As Integer
+    
+    ThisWorkbook.Activate
+    Sheets("datasheet").Select
+    Sheets("datasheet").Activate
+    
+    Range("E1048576").Select
+    Selection.End(xlUp).Select
+    LastRow = ActiveCell.Row
+    'MsgBox (lastRow)
+    
+    
+End Sub
+Sub addOneSheet()
+'
+' addOneSheet Macro
+' Add one excel sheet and rename it.
+'
+    Dim sheetName As String
+    
+    ThisWorkbook.Activate
+    
+    Sheets.Add After:=ActiveSheet
+    sheetName = ActiveSheet.Name
+    
+    Sheets(sheetName).Select
+    Sheets(sheetName).Name = "TempSheet"
+    
+    Range("A1").Select
+    
+    
+End Sub
+
+Sub addTempSht()
+'
+' addTempSht Macro
+' Add one excel sheet and rename it.
+'
+    Dim sheetName As String
+    
+    ThisWorkbook.Activate
+    
+    Sheets.Add After:=ActiveSheet
+    sheetName = ActiveSheet.Name
+    
+    Sheets(sheetName).Select
+    Sheets(sheetName).Name = "TempSht"
+    
+    Range("A1").Select
+    
+    
+End Sub
+
+Sub addManySheet()
+'
+' addManySheet Macro
+' Add Many excel sheet and rename it.
+    
+    ThisWorkbook.Activate
+    Dim LastRow As Integer
+    
+    Sheets("TempSheet").Select
+    Sheets("TempSheet").Activate
+    
+    Range("A1048576").Select
+    Selection.End(xlUp).Select
+    LastRow = ActiveCell.Row
+    
+    Dim sheetName As String
+    Sheets("datasheet").Select
+    Sheets("datasheet").Activate
+    
+    For i = 1 To LastRow
+        Sheets.Add After:=ActiveSheet
+       ActiveSheet.Name = Sheets("TempSheet").Range("A" & i).Value
+        
+    Next i
+    
+    Range("A1").Select
+    
+    
+End Sub
+
+Sub removeDuplicate()
+'
+' removeDuplicate Macro
+' Remove duplicate from one column and sort as ASC
+'
+    Dim LastRow As Integer
+
+    ThisWorkbook.Activate
+    Sheets("datasheet").Select
+    Sheets("datasheet").Activate
+    
+    Range("E1048576").Select
+    Selection.End(xlUp).Select
+    LastRow = ActiveCell.Row
+    
+    ''Columns("E:E").Select
+     Range("E3:" & "E" & LastRow).Select ''error
+     Selection.Copy
+    
+    Sheets("TempSheet").Select
+    Range("A1").Select
+    ActiveSheet.Paste
+    Application.CutCopyMode = False
+    ActiveSheet.Range("$A$1:" & "$A$" & LastRow).RemoveDuplicates Columns:=1, Header:= _
+        xlNo
+        
+'    ActiveSheet.Range("$A$1:$A$18861").RemoveDuplicates Columns:=1, Header:= _
+'        xlNo
+'
+    ActiveWorkbook.Worksheets("TempSheet").Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("TempSheet").Sort.SortFields.Add Key:=Range("A1"), SortOn _
+        :=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets("TempSheet").Sort
+        .SetRange Range("A1:" & "A" & LastRow)
+        '.SetRange Range("A1:A18861")
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    Range("A1").Select
+    
+End Sub
+
+
+Sub deleteSheet()
+''Application.DisplayAlerts = False
+
+    For Each Sheet In ActiveWorkbook.Worksheets
+        
+        If Sheet.Name = "TempSheet" Then
+          Sheet.Delete
+        End If
+     
+        
+    Next Sheet
+
+''Application.DisplayAlerts = True
+
+End Sub
+
+Sub deleteTempSht()
+''Application.DisplayAlerts = False
+
+    For Each Sheet In ActiveWorkbook.Worksheets
+        
+        If Sheet.Name = "TempSht" Then
+          Sheet.Delete
+        End If
+     
+        
+    Next Sheet
+
+''Application.DisplayAlerts = True
+
+End Sub
+
+Sub deleteAllSheet_Categor()
+
+    ''Application.DisplayAlerts = False
+
+    ThisWorkbook.Activate
+    Dim LastRow As Integer
+    
+    Sheets("TempSheet").Select
+    Sheets("TempSheet").Activate
+    
+    Range("A1048576").Select
+    Selection.End(xlUp).Select
+    LastRow = ActiveCell.Row
+    
+    Dim s As Worksheet, t As String
+    Dim i As Long, K As Long
+    K = Sheets.Count
+
+    Dim shtName As String
+
+    For i = K To 1 Step -1
+        t = Sheets(i).Name
+        For j = 1 To LastRow
+            shtName = Sheets("TempSheet").Range("A" & j).Value
+            If t = shtName Then
+                    Sheets(i).Delete
+                    Exit For
+            End If
+        Next j
+    Next i
+
+    ''Application.DisplayAlerts = True
+
+End Sub
+
+
+
+Sub SheetKiller()
+    
+    Application.DisplayAlerts = False
+
+    For Each Sheet In ActiveWorkbook.Worksheets
+        For i = 1 To LastRow
+            shtName = Sheets("TempSheet").Range("A" & i).Value
+            If Sheet.Name = shtName Then
+              Sheet.Delete
+              Exit For
+            End If
+        Next i
+        
+    Next Sheet
+    Application.DisplayAlerts = True
+    
+End Sub
+
+
+Sub applyFilter()
+'
+' applyFilter Macro
+' 'Apply filter and copy filter value on next sheet
+
+    Dim LastRow As Integer
+    Dim lr As Integer
+    Dim shtName As String
+    
+    
+    ThisWorkbook.Activate
+    Sheets("datasheet").Select
+    Sheets("datasheet").Activate
+    
+    Range("E1048576").Select
+    Selection.End(xlUp).Select
+    LastRow = ActiveCell.Row
+    
+    
+    Sheets("TempSheet").Select
+    Sheets("TempSheet").Activate
+    
+    Range("A1048576").Select
+    Selection.End(xlUp).Select
+    lr = ActiveCell.Row
+    
+    Sheets("datasheet").Select
+    Sheets("datasheet").Activate
+    
+    Range("A2:" & "F" & LastRow).Select ''error
+    'Rows("2:2").Select
+    Selection.AutoFilter
+    
+    For i = 1 To lr
+        Sheets("datasheet").Select
+        shtName = Sheets("TempSheet").Range("A" & i).Value
+        
+        ''ActiveSheet.Range("$A$2:$F$18861").AutoFilter Field:=5, Criteria1:="AB"
+        ActiveSheet.Range("$A$2:$G$" & LastRow).AutoFilter Field:=5, Criteria1:=shtName
+        
+        Range("A2").Select
+        Range(Selection, Selection.End(xlToRight)).Select
+        Range(Selection, Selection.End(xlDown)).Select
+        Selection.Copy
+        
+        ''Sheets("AB").Select
+        Sheets(shtName).Select
+        
+        Range("A1").Select
+        ActiveSheet.Paste
+        Selection.Columns.AutoFit
+        Application.CutCopyMode = False
+        Range("A1").Select
+        
+    Next i
+    
+End Sub
+
+
+Sub textToColumn()
+'
+' textToColumn Macro
+' apply Text to Column and separate the words
+'
+
+    ThisWorkbook.Activate
+    Sheets("datasheet").Select
+    Sheets("datasheet").Activate
+
+    Columns("C:C").Select
+    Selection.Copy
+    Sheets("TempSht").Select
+    Range("A1").Select
+    ActiveSheet.Paste
+    
+    Range("B1").Select
+    ActiveSheet.Paste
+    
+    Application.CutCopyMode = False
+    Selection.TextToColumns Destination:=Range("B1"), DataType:=xlDelimited, _
+        TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=True, Tab:=False, _
+        Semicolon:=False, Comma:=False, Space:=True, Other:=False, FieldInfo _
+        :=Array(Array(1, 1), Array(2, 1), Array(3, 1), Array(4, 1), Array(5, 1), Array(6, 1), _
+        Array(7, 1)), TrailingMinusNumbers:=True
+    ActiveCell.FormulaR1C1 = ""
+    Range("A1").Select
+    
+End Sub
+
+
+Sub dynamicallyFindLastColumn()
+'
+' dynamicallyFindLastColumn Macro
+' Dynamically Find Last Column in a sheet
+'
+    Dim LastRow As Integer
+    
+    ThisWorkbook.Activate
+    Sheets("TempSht").Select
+    Sheets("TempSht").Activate
+
+    Columns("A:A").Select
+    Selection.Delete Shift:=xlToLeft
+    Range("A1").Select
+    
+    'Range("E1048576").Select
+    Dim columnNo As Integer
+    Dim LastcolumnNo As Integer
+
+    For i = 1 To 50
+        Cells(1048576, i).Select
+        Selection.End(xlUp).Select
+        LastRow = ActiveCell.Row
+        
+        If LastRow = 1 Then
+            ''MsgBox ("No Data in this Column")
+            columnNo = ActiveCell.Column
+            ''MsgBox (columnNo)
+            LastcolumnNo = columnNo - 1
+            ''MsgBox "Please See TempSht for Last Column Value is=" & LastcolumnNo
+            Exit For
+        End If
+
+    Next i
+    
+End Sub
+
+
+Sub find_W_WO_WWO()
+'
+' find_W_WO_WWO MacrO
+' find W,WO,WWO in a string and print the string from that position
+'
+    Dim LastRow As Integer
+    
+    ThisWorkbook.Activate
+    Sheets("datasheet").Select
+    Sheets("datasheet").Activate
+    
+    Range("E1048576").Select
+    Selection.End(xlUp).Select
+    LastRow = ActiveCell.Row
+    
+    Range("G3").Select
+    ActiveCell.FormulaR1C1 = "=TRIM(RC[-4])"
+    
+    Range("H3").Select
+    ActiveCell.FormulaR1C1 = "=LOWER(RC[-1])"
+    
+    Range("I3").Select
+    ActiveCell.FormulaR1C1 = "=RIGHT(RC[-1],LEN(RC[-1])-FIND("" w"",RC[-1]))"
+    
+    Range("J3").Select
+    ActiveCell.FormulaR1C1 = "=LEN(RC[-1])"
+    
+    Range("K3").Select
+    ActiveCell.FormulaR1C1 = "=UPPER(RC[-2])"
+    
+    Range("G" & LastRow).Select
+    ActiveCell.FormulaR1C1 = "1"
+    
+    Range("H" & LastRow).Select
+    ActiveCell.FormulaR1C1 = "1"
+    
+    Range("I" & LastRow).Select
+    ActiveCell.FormulaR1C1 = "1"
+    
+    Range("J" & LastRow).Select
+    ActiveCell.FormulaR1C1 = "1"
+    
+    Range("K" & LastRow).Select
+    ActiveCell.FormulaR1C1 = "1"
+
+    Range("G3:K3").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.FillDown
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.Columns.AutoFit
+    Selection.Replace What:="#VALUE!", Replacement:="", LookAt:=xlPart, _
+        SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, _
+        ReplaceFormat:=False
+    Range("G3").Select
+    Application.CutCopyMode = False
+    
+    For i = 3 To LastRow
+       
+       If Range("J" & i).Value < 4 Then
+            Range("K" & i).Value = ""
+       End If
+       
+    Next i
+    
+
+    Columns("G:J").Select
+    Selection.Delete Shift:=xlToLeft
+    
+    Range("G2").Select
+    ActiveCell.FormulaR1C1 = "W_WO_WWO"
+    Selection.Font.Bold = True
+    
+End Sub
+
+
+
